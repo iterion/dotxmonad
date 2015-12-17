@@ -9,13 +9,15 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.UrgencyHook
 import XMonad.Layout.Fullscreen
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spiral
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
-import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.Run(spawnPipe,safeSpawn)
 import XMonad.Util.EZConfig(additionalKeys)
+import XMonad.Util.NamedWindows
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
@@ -39,14 +41,14 @@ myScreenshot = "screenshot"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
-myLauncher = "$(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')"
+myLauncher = "$(yeganesh -x -- -fn '-*-droid sans-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#002b36' -nf '#839496' -sb '#7C7C7C' -sf '#CEFFAC')"
 
 
 ------------------------------------------------------------------------
 -- Workspaces
 -- The default number of workspaces (virtual screens) and their names.
 --
-myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
+myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media","6:chat"] ++ map show [7..9]
 
 
 ------------------------------------------------------------------------
@@ -102,6 +104,24 @@ myLayout = avoidStruts (
 -- Colors and borders
 -- Currently based on the ir_black theme.
 --
+
+yellowColor     =  "#b58900"
+orangeColor     =  "#cb4b16"
+redColor        =  "#dc322f"
+magentaColor    =  "#d33682"
+violetColor     =  "#6c71c4"
+blueColor       =  "#268bd2"
+cyanColor       =  "#2aa198"
+greenColor      =  "#859900"
+baseColor03     =  "#002b36"
+baseColor02     =  "#073642"
+baseColor01     =  "#586e75"
+baseColor00     =  "#657b83"
+baseColor0      =  "#839496"
+baseColor1      =  "#93a1a1"
+baseColor2      =  "#eee8d5"
+baseColor3      =  "#fdf6e3"
+
 myNormalBorderColor  = "#7c7c7c"
 myFocusedBorderColor = "#ffb6b0"
 
@@ -116,7 +136,7 @@ tabConfig = defaultTheme {
 }
 
 -- Color of current window title in xmobar.
-xmobarTitleColor = "#FFB6B0"
+xmobarTitleColor = magentaColor
 
 -- Color of current workspace in xmobar.
 xmobarCurrentWorkspaceColor = "#CEFFAC"
@@ -214,11 +234,11 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      windows W.focusDown)
 
   -- Move focus to the next window.
-  , ((modMask, xK_j),
+  , ((modMask, xK_h),
      windows W.focusDown)
 
   -- Move focus to the previous window.
-  , ((modMask, xK_k),
+  , ((modMask, xK_t),
      windows W.focusUp  )
 
   -- Move focus to the master window.
@@ -238,15 +258,15 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      windows W.swapUp    )
 
   -- Shrink the master area.
-  , ((modMask, xK_h),
+  , ((modMask, xK_d),
      sendMessage Shrink)
 
   -- Expand the master area.
-  , ((modMask, xK_l),
+  , ((modMask, xK_n),
      sendMessage Expand)
 
   -- Push window back into tiling.
-  , ((modMask, xK_t),
+  , ((modMask, xK_j),
      withFocused $ windows . W.sink)
 
   -- Increment the number of windows in the master area.
@@ -321,6 +341,20 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
 --
 
 
+-----------------------------------------------------------------------
+-- libnotify
+-- set up notifications
+
+data LibNotifyUrgencyHook = LibNotifyUrgencyHook deriving (Read,Show)
+
+instance UrgencyHook LibNotifyUrgencyHook where
+  urgencyHook LibNotifyUrgencyHook w = do
+    name     <- getName w
+    Just idx <- fmap(W.findTag w) $ gets windowset
+
+    safeSpawn "notify-send" [show name, "workspace " ++ idx]
+
+
 ------------------------------------------------------------------------
 -- Startup hook
 -- Perform an arbitrary action each time xmonad starts or is restarted
@@ -336,7 +370,9 @@ myStartupHook = return ()
 --
 main = do
   xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
-  xmonad $ defaults {
+  xmonad
+    $ withUrgencyHook LibNotifyUrgencyHook
+    $ defaults {
       logHook = dynamicLogWithPP $ xmobarPP {
             ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor xmobarTitleColor "" . shorten 100

@@ -9,27 +9,30 @@ PATH=$PATH:~/.cabal/bin:~/.xmonad/bin
 
 # Configure X
 xsetroot -cursor_name left_ptr &
-xrdb -merge ~/.Xdefaults &
+xrdb -merge ~/.Xresources &
 
 # Start a window compositor. This ensures Google Chrome paints correctly.
 xcompmgr -n &
+
+/usr/bin/VBoxClient-all
+xset r rate 200 25
 
 # Start the system tray
 tray &
 
 # Start two terminals
-gnome-terminal &
-gnome-terminal &
+#gnome-terminal &
+#gnome-terminal &
 
 # Start a browser
-google-chrome &
+#google-chrome &
 
 # Start screensaver
 # Kill gnome-screensaver if started by default
-killall gnome-screensaver &
-xscreensaver -no-splash &
+#killall gnome-screensaver &
+#xscreensaver -no-splash &
 
 # Start sound server
-pulseaudio --start &
+#pulseaudio --start &
 
-exec ck-launch-session dbus-launch --sh-syntax --exit-with-session xmonad
+exec xmonad
