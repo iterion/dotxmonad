@@ -21,11 +21,11 @@ xset r rate 200 25
 tray &
 
 # Start two terminals
-#gnome-terminal &
-#gnome-terminal &
+# urxvt &
+# urxvt &
 
 # Start a browser
-#google-chrome &
+# google-chrome-stable &
 
 # Start screensaver
 # Kill gnome-screensaver if started by default
