@@ -1,0 +1,21 @@
+conky.config = {
+  background = false,
+  out_to_x = false,
+  out_to_console = true,
+  update_interval = 3,
+  total_run_times = 0,
+  use_spacer = none
+}
+
+conky.text = [[
+Cpu: ${cpu}% Mem: ${memperc}% ^fg(\#268bd2)${time %b %d %H:%M}^fg()
+]]
+-- temp, loadavg, cpu usage, cpu freq, battery, network (click launches wicd), date */
+
+-- TEXT */
+-- ^fg(\#999999)${hwmon temp 1}°^fg()  \ */
+-- ^fg(\#666666)${loadavg 1}^fg()  \ */
+-- ^fg(\#888888)${cpu cpu1}%^fg()   ^fg(\#aaaaaa)${freq_g 1}GHz^fg()   \ */
+-- ^fg(\#666666)${mem}^fg()   \ */
+-- ^fg(\#bbbbbb)${wireless_link_qual_perc wlan0}%  ${wireless_essid wlan0}^fg()  ^fg(\#d94c3d)${upspeedf wlan0}k^fg()  ^fg(\#a4bc51)${downspeedf wlan0}k^fg()${endif}^ca()   \ */
+-- ^fg(\#ffffff)${time %b %d %H:%M}^fg() */

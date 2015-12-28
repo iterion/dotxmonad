@@ -14,25 +14,21 @@ xrdb -merge ~/.Xresources &
 # Start a window compositor. This ensures Google Chrome paints correctly.
 xcompmgr -n &
 
-/usr/bin/VBoxClient-all
+sh ~/.fehbg &
 xset r rate 200 25
 
 # Start the system tray
-tray &
+stalonetray &
+nm-applet &
 
 # Start two terminals
-# urxvt &
-# urxvt &
+urxvt &
+urxvt &
 
 # Start a browser
-# google-chrome-stable &
+google-chrome-stable &
 
 # Start screensaver
-# Kill gnome-screensaver if started by default
-#killall gnome-screensaver &
-#xscreensaver -no-splash &
-
-# Start sound server
-#pulseaudio --start &
+gnome-screensaver &
 
 exec xmonad
